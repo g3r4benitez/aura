@@ -120,3 +120,7 @@ Pipfile*
 
 # Pylint
 .pylintrc
+
+# SQLite
+*.db
+sql_app.db
