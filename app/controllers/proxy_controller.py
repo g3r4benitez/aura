@@ -2,6 +2,7 @@ import httpx
 from fastapi import APIRouter, Request, Response
 
 from app.core.config import EXTERNAL_API_URL
+from app.exceptions.general_exeptions import BadGatewayError
 
 router = APIRouter()
 
@@ -28,10 +29,8 @@ async def proxy(request: Request, path: str):
                 timeout=30.0
             )
         except httpx.RequestError as e:
-            return Response(
-                content=f"Error al conectarse a la API externa: {e}, url: {url}, params: {params}, headers: {headers}, body: {body}",
-                status_code=502
-            )
+            raise BadGatewayError(f"Error al conectarse a la API externa: {e}, "
+                                  f"url: {url}, params: {params}, headers: {headers}, body: {body}")
 
 
     response = Response(

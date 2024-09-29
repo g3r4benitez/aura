@@ -1,8 +1,5 @@
-import json
-
 from sqlmodel import Session, select, SQLModel
 
-from app.models.user import User
 from app.core.database import engine
 from app.exceptions.general_exeptions import BadRequestException
 

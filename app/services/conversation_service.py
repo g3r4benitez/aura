@@ -1,27 +1,27 @@
 from sqlmodel import Session, select
-from app.models.user import Channel
+from app.models.conversation import Conversation
 from app.core.database import engine
 
-class ChannelService:
+class ConversationService:
     def __init__(self, session: Session):
         self.session = session
 
-    def create_channel(self, channel: Channel) -> Channel:
-        self.session.add(channel)
+    def create_conversation(self, conversation: Conversation) -> Conversation:
+        self.session.add(conversation)
         self.session.commit()
-        self.session.refresh(channel)
-        return channel
+        self.session.refresh(conversation)
+        return conversation
 
     def get(self, _id):
-        obj = self.session.get(Channel, _id)
+        obj = self.session.get(Conversation, _id)
         return obj
 
     def get_all(self):
-        statement = select(Channel)
+        statement = select(Conversation)
         results = self.session.exec(statement)
         return results.all()
 
 
 session = Session(engine)
-channel_service = ChannelService(session)
+conversation_service = ConversationService(session)
 

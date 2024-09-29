@@ -1,8 +1,8 @@
-from app.models.user import User
+from app.models.conversation import Conversation
 from app.repositories.base_respository import BaseRepository
 
-class UserRepository(BaseRepository):
-    model_name = User
+class ConversationRepository(BaseRepository):
+    model_name = Conversation
 
 
-user_repository = UserRepository()
+conversation_repository = ConversationRepository()

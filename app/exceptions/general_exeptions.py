@@ -30,3 +30,9 @@ class InternalServerError(HTTPCustomException):
 
     def __init__(self, message: str = DEFAULT_MESSAGE, **kwargs):
         super().__init__(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, msg=message, **kwargs)
+
+class BadGatewayError(HTTPCustomException):
+    DEFAULT_MESSAGE = "Bad Gateway Error"
+
+    def __init__(self, message: str = DEFAULT_MESSAGE, **kwargs):
+        super().__init__(status_code=status.HTTP_502_BAD_GATEWAY, msg=message, **kwargs)
