@@ -124,3 +124,6 @@ Pipfile*
 # SQLite
 *.db
 sql_app.db
+
+*.parquet
+.parquet
