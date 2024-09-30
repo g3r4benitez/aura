@@ -1,4 +1,10 @@
+from sqlalchemy.orm import Relationship
 from sqlmodel import Field, SQLModel
+from typing import Optional, List
+
+class Tag(SQLModel, table=True):
+    id_tag: int = Field(default=None, primary_key=True)
+    tag_value: str
 
 
 class Conversation(SQLModel, table=True):
@@ -6,4 +12,6 @@ class Conversation(SQLModel, table=True):
     question: str
     answer: str
     sequences_conversation: float
-    id_tag: int
+    id_tag: Optional[int] = Field(default=None, foreign_key="tag.id_tag")
+
+

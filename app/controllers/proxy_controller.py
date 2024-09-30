@@ -1,13 +1,18 @@
+from pyexpat.errors import messages
+
 import httpx
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request, Response, BackgroundTasks
 
 from app.core.config import EXTERNAL_API_URL
 from app.exceptions.general_exeptions import BadGatewayError
+from app.core.config import CONNECTION_TIMEOUT
+
+from app.core.logger import logger
 
 router = APIRouter()
 
-@router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
-async def proxy(request: Request, path: str):
+@router.api_route("/{path:path}", methods=["GET"])
+async def proxy(request: Request, path: str, background_task: BackgroundTasks):
     url = f"{EXTERNAL_API_URL}/{path}"
 
     async with httpx.AsyncClient() as client:
@@ -26,11 +31,18 @@ async def proxy(request: Request, path: str):
                 params=params,
                 headers=headers,
                 content=body,
-                timeout=30.0
+                timeout=CONNECTION_TIMEOUT
             )
         except httpx.RequestError as e:
-            raise BadGatewayError(f"Error al conectarse a la API externa: {e}, "
-                                  f"url: {url}, params: {params}, headers: {headers}, body: {body}")
+            message = (f"Error al conectarse a la API externa: {e}, "
+                       f"url: {url}, params: {params}, headers: {headers}, body: {body}")
+
+            #BackgroundTasks.add_task(logger.info, msg=message)
+
+            raise BadGatewayError(message)
+
+    background_task.add_task(logger.info, msg=f"response.status_code: {external_response.status_code}, "
+                                              f"response.content: {external_response.content}")
 
 
     response = Response(

@@ -127,3 +127,5 @@ sql_app.db
 
 *.parquet
 .parquet
+static/parquet
+static/parquet/*
