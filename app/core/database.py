@@ -1,7 +1,8 @@
 import os
 from sqlmodel import create_engine, Session, SQLModel
 
-from app.models.conversation import Conversation
+from app.models.conversation import Conversation, Tag
+from app.models.statistic import Statistic
 
 SQLALCHEMY_DATABASE_URL = os.environ.get("DB_URL")
 

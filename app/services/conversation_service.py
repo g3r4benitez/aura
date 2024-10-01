@@ -44,12 +44,11 @@ class ConversationService:
         # look up for company
         # @todo: doesn't exist relation between company and conversations
 
-
-
         results = self.session.exec(statement)
         conversations = results.all()
+
         if conversations:
-            conversations_ids = [conversation.id_conversation for conversation in conversations ]
+            conversations_ids = [conversation.id_conversation for conversation in conversations]
             return {
                 "conversations_ids": conversations_ids,
                 "total": len(conversations_ids),

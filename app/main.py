@@ -39,7 +39,10 @@ def start_app() -> FastAPI:
     return fast_app
 
 
+
+
 app = start_app()
+
 init(app)
 
 if __name__ == '__main__':

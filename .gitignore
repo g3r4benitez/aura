@@ -129,3 +129,4 @@ sql_app.db
 .parquet
 static/parquet
 static/parquet/*
+todo.txt

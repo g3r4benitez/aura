@@ -1,6 +1,5 @@
-from sqlalchemy.orm import Relationship
 from sqlmodel import Field, SQLModel
-from typing import Optional, List
+from typing import Optional
 
 class Tag(SQLModel, table=True):
     id_tag: int = Field(default=None, primary_key=True)

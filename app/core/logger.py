@@ -1,9 +1,10 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import sys
+from app.core.config import APP_NAME
 
 # Principal Setting for logger
-logger = logging.getLogger("challenge_notifications")
+logger = logging.getLogger(APP_NAME)
 logger.setLevel(logging.DEBUG)
 
 # Log format

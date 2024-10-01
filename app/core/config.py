@@ -14,3 +14,17 @@ DB_URL: str = _config("DB_URL", cast=str, default="sqlite:///./app/sql_app.db")
 
 EXTERNAL_API_URL: str = _config("EXTERNAL_API_URL", cast=str, default="http://cualquierapi.com")
 CONNECTION_TIMEOUT = _config("CONNECTION_TIMEOUT", cast=int, default=10)
+
+def get_celery_broker_url():
+    """Generate the broker url from the environment."""
+    protocol = _config("CELERY_BROKER_PROTOCOL", cast=str, default="")
+    username = _config("CELERY_BROKER_USERNAME", default="")
+    password = _config("CELERY_BROKER_PASSWORD", cast=str, default="")
+    host = _config("CELERY_BROKER_HOST", cast=str, default="")
+    port = _config("CELERY_BROKER_PORT", cast=str, default="")
+    db = _config("CELERY_BROKER_DB", cast=str, default="")
+    return f"{protocol}://{username}:{password}@{host}:{port}/{db}"
+
+
+# Celery
+CELERY_BROKER_URL: str = get_celery_broker_url()

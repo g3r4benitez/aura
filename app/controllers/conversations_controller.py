@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 
-from app.core.logger import logger
 from app.entities.conversations import ConversationsFilterDTO
 from app.services.conversation_service import conversation_service
 

@@ -72,6 +72,12 @@ The applications logs are located in
 ### Working
 
 #### Proxy Service
+* Implementar un servicio que actúe como proxy para un API ficticio
+`http://cualquierapi.com`
+* El servicio debe poder manejar peticiones como: curl
+ `http://127.0.0.1:8080/categories/MLA97994` y redirigirlas a
+`http://cualquierapi.com/categories/MLA97994`
+Utilizar FastAPI como framework web para el servicio.
 ```
 curl --request POST 'http://127.0.0.1:9009/categories/MLA97994' 
 ```
@@ -83,7 +89,7 @@ curl --request GET 'http://127.0.0.1:9009/api/conversations?company=microsoft&ta
 
 ### Api Documentation
 Go to [http://localhost:9009/docs](http://localhost:9009/docs).
-![image info](./static/images/docs.png)
+![image info](./static/images/swagger.png)
 
 
 ## Architecture
