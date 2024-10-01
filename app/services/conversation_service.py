@@ -1,10 +1,10 @@
-from sqlmodel import Session, select, or_
+from sqlmodel import Session, select, or_, distinct
 
+from app.core.config import CACHE_TTL
 from app.entities.conversations import ConversationsFilterDTO
-from app.models.conversation import Conversation
+from app.models.conversation import Conversation, Tag
 from app.core.database import engine
-from app.services.tag_service import tag_service
-from app.core.logger import logger
+from app.core.cache import redis_client, get_key_from_text
 
 class ConversationService:
     def __init__(self, session: Session):
@@ -26,37 +26,46 @@ class ConversationService:
         return results.all()
 
     def filter(self, params: ConversationsFilterDTO):
-        statement = select(Conversation)
+        cache_key = get_key_from_text(params.tags)
+        cached_converstions_id = redis_client.get(cache_key)
 
-        # look up for tags
-        conditions = []
-        for tag_value in params.tags.split(","):
-            tag = tag_service.find_tag(tag_value.strip())
-            if tag:
-                conditions.append(Conversation.id_tag == tag.id_tag)
-            else:
-                logger.info(f"tag with '{tag_value}' doesn't include in look up for conversations"
-                            f"because, these doesn't exists ")
-
-        if conditions:
-            statement = statement.where(or_(*conditions))
-
-        # look up for company
-        # @todo: doesn't exist relation between company and conversations
-
-        results = self.session.exec(statement)
-        conversations = results.all()
-
-        if conversations:
-            conversations_ids = [conversation.id_conversation for conversation in conversations]
+        if cached_converstions_id:
             return {
-                "conversations_ids": conversations_ids,
-                "total": len(conversations_ids),
+                "conversations_ids": cached_converstions_id,
+                "total": len(cached_converstions_id),
                 "page": 1,
-                "per_page": len(conversations_ids)
+                "per_page": len(cached_converstions_id)
             }
         else:
-            return None
+            statement = (select( distinct(Conversation.id_conversation) ).
+                         where(Conversation.id_tag==Tag.id_tag))
+
+            # look up for tags
+            conditions = []
+            for tag_v in params.tags.split(","):
+                conditions.append( Tag.tag_value== tag_v.strip())
+
+            if conditions:
+
+                statement = statement.where(or_(*conditions))
+
+            # look up for company
+            # @todo: doesn't exist relation between company and conversations
+
+            results = self.session.exec(statement)
+            conversations = results.all()
+
+            if conversations:
+                conversations_ids = ",".join(map(str,conversations))
+                redis_client.setex(cache_key, CACHE_TTL, conversations_ids)
+                return {
+                    "conversations_ids": conversations_ids,
+                    "total": len(conversations_ids),
+                    "page": 1,
+                    "per_page": len(conversations_ids)
+                }
+            else:
+                return None
 
 
 session = Session(engine)

@@ -82,12 +82,51 @@ Utilizar FastAPI como framework web para el servicio.
 curl --request POST 'http://127.0.0.1:9009/categories/MLA97994' 
 ```
 
+*Decisiones:*
+- usar la url de MercadoLibre, el servicio cualqiuierapi.com no existe por tanto simpre mis request caian en `RequestError`
+- Escribir los logs usando `background_task`, ya que se trata de una tarea de menor importancia, se puede hacer asincronica y en segundo plano
+- Guardar Estadisticas usando `Celery Task` y `RabbitMQ`, también se trata de una tarea secundaria, decidí hacerlo con Celery y RabbitMQ para mostrar un poco más de versatilidad
+- Manejo de errors y excepciones, extendí el manejador de errores de FastApi para tener mejor legibilidad del codigo
+
 #### Conversations API
 ```
 curl --request GET 'http://127.0.0.1:9009/api/conversations?company=microsoft&tags=competition,orientation' 
 ```
+*Decisiones:*
+- Tomar el set de datos de ejemplo que venia en formato Parquet, descargarlo, leerlo y minar una base de datos SQLite para trabajar con ella
+- Usar SQLModel para consultas y modelos y schemas
+- Utilizar Redis cache para evitar conectar a la db para peticiones repetidas y ganar en escalabilidad
+- No habia una relacion entre Conversaciones y Companias por lo tanto no hubo cruce de datos
+
+#### Estadisticas
+Cree un endpoint básico para consultar una estadistica general de uso del proxy, este endpoint no tiene filtros, muestra todas las estadicas
+con el formato 
+```
+[
+  {
+    "status_code": 404,
+    "id": 1,
+    "path": "https://www.mercadolibre.com.ar/Hola",
+    "seconds": 0.309469,
+    "created_at": "2024-09-30T23:04:16.466846"
+  },
+ ]
+```
+
+Ejemplo de LLamada
+```
+curl -X 'GET' \
+  'http://127.0.0.1:9009/api/statistics/' \
+  -H 'accept: application/json' 
+```
+
+#### Unit Test
+Solo cree test unitarios para algunos endpoints, me escaseaba el tiempo y 
+prefería tener una implementación más completa, quizá con menos cobertura de test
+pero a la vez también pudiendo demostrar que se escribir test unitarios
 
 ### Api Documentation
+Utilicé el sistema de documentacion propuesto por FastApi que integra Swagger para probar la api y documentarla 
 Go to [http://localhost:9009/docs](http://localhost:9009/docs).
 ![image info](./static/images/swagger.png)
 

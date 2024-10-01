@@ -1,5 +1,4 @@
 import os
-
 from starlette.config import Config
 
 ROOT_DIR = os.getcwd()
@@ -14,6 +13,17 @@ DB_URL: str = _config("DB_URL", cast=str, default="sqlite:///./app/sql_app.db")
 
 EXTERNAL_API_URL: str = _config("EXTERNAL_API_URL", cast=str, default="http://cualquierapi.com")
 CONNECTION_TIMEOUT = _config("CONNECTION_TIMEOUT", cast=int, default=10)
+
+# Redis
+
+REDIS_HOST = _config("REDIS_HOST", cast=str, default="localhost")
+REDIS_PORT = _config("REDIS_PORT", cast=int, default=6379)
+REDIS_DB = _config("REDIS_DB", cast=int, default=0)
+REDIS_PASSWORD = _config("REDIS_PASSWORD", cast=str, default=None)
+CACHE_TTL = _config("CACHE_TTL", cast=int, default=300)
+
+
+
 
 def get_celery_broker_url():
     """Generate the broker url from the environment."""
